@@ -1,0 +1,17 @@
+{
+  "name": "LigthhouseHue",
+  "version": "0.0.1",
+  "description": "Lighthouse score on Philips Hue light bulbs",
+  "main": "index.js",
+  "scripts": {
+    "start": "lighthouse --output=html --output-path=results.html"
+  },
+  "author": "Eric Bidelman <ebidel@>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "json-stringify-safe": "^5.0.1",
+    "lighthouse": "^1.4.1",
+    "node-hue-api": "^2.4.1",
+    "yargs": "^6.6.0"
+  }
+}
