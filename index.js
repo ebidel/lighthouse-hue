@@ -19,7 +19,7 @@
 const yargs = require('yargs');
 
 const Printer = require('lighthouse/lighthouse-cli/printer');
-const stringifySafe = require('json-stringify-safe');
+// const stringifySafe = require('json-stringify-safe');
 
 // const Log = require('lighthouse/lighthouse-core/lib/log');
 const Log = require('./src/log');
@@ -30,7 +30,7 @@ const PERF_CONFIG = require('lighthouse/lighthouse-core/config/perf.json');
 const DEFAULT_CONFIG = require('lighthouse/lighthouse-core/config/default.json');
 
 const APP_DESCRIPTION = 'Lighthouse';
-const USERNAME = 'sG13PUJfa-n2US6ZGWYnMT2A4YC8JBZ66SVpl1Yg';
+const USERNAME = 'FILL IN';
 
 const flags = yargs
   .help('h')
