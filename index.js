@@ -28,7 +28,7 @@ const HueLights = require('./src/huelights');
 // const DEFAULT_CONFIG = require('lighthouse/lighthouse-core/config/default.json');
 
 const APP_DESCRIPTION = 'Lighthouse';
-const USERNAME = 'FILL ME';
+const USERNAME = fs.readFileSync('.hueusername', 'utf8');
 
 const flags = yargs
   .help('h')
