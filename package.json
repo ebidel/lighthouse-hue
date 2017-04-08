@@ -9,9 +9,9 @@
   "author": "Eric Bidelman <ebidel@>",
   "license": "Apache-2.0",
   "dependencies": {
-    "json-stringify-safe": "^5.0.1",
-    "lighthouse": "^1.4.1",
-    "node-hue-api": "^2.4.1",
-    "yargs": "^6.6.0"
+    "lighthouse": "^1.6.3",
+    "node-hue-api": "^2.4.2",
+    "open": "^0.0.5",
+    "yargs": "^7.0.2"
   }
 }

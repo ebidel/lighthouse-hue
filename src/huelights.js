@@ -77,7 +77,11 @@ class HueLights {
 
   createUser() {
     const fn = this.api.createUser.bind(this.api, this.hostname, APP_DESCRIPTION);
-    return promiseify(fn);
+    return promiseify(fn).then(username => {
+      this.username = username;
+      this.api = new hue.api(this.hostname, this.username);
+      return this.username;
+    });
   }
 
   listUsers() {

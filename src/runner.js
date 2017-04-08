@@ -18,8 +18,7 @@
 
 const lighthouse = require('lighthouse');
 const ChromeLauncher = require('lighthouse/lighthouse-cli/chrome-launcher.js').ChromeLauncher;
-// const Log = require('lighthouse/lighthouse-core/lib/log');
-const Log = require('./log');
+const Log = require('lighthouse/lighthouse-core/lib/log');
 
 const _SIGINT = 'SIGINT';
 const _SIGINT_EXIT_CODE = 130;
@@ -52,17 +51,18 @@ class LighthouseRunner {
           return;
         }
 
-        // console.log('LAUNCHING CHROME');
+        console.log((`${Log.purple}Launching Chrome${Log.reset}`));
         return this.launcher.run();
       });
   }
 
   run() {
     return this.launchChrome()
-      .then(() => lighthouse(this.url, this.flags, this.config))
-      .then(results => {
-        return this.launcher.kill().then(_ => results);
+      .then(() => {
+        console.log(`${Log.yellow}Lighthouse:${Log.reset} running...`);
+        return lighthouse(this.url, this.flags, this.config);
       })
+      .then(results => this.launcher.kill().then(_ => results))
       .catch(err => {
         return this.launcher.kill().then(() => {
           throw err;
@@ -70,16 +70,12 @@ class LighthouseRunner {
       });
   }
 
-  getOverallScore(results) {
-    const scoredAggregations = results.aggregations.filter(a => a.scored);
-
+  getOverallScore(lighthouseResults) {
+    const scoredAggregations = lighthouseResults.aggregations.filter(a => a.scored);
     const total = scoredAggregations.reduce((sum, aggregation) => {
       return sum + aggregation.total;
     }, 0);
-
-    const percent = (total / scoredAggregations.length) * 100;
-
-    return percent;
+    return (total / scoredAggregations.length) * 100;
   }
 
   print(score) {
@@ -90,7 +86,7 @@ class LighthouseRunner {
     if (score > 75) {
       output = `${Log.green}${score}${Log.reset}`
     }
-    console.log(output);
+    console.log(`${Log.yellow}Lighthouse${Log.reset} score: ${output}`);
   }
 }
 
