@@ -21,7 +21,8 @@ const hue = require('node-hue-api');
 const COLORS = {
   poor: hexToRgb('#eb211e'),
   average: hexToRgb('#ffae00'),
-  good: hexToRgb('#8BC34A')
+  good: hexToRgb('#8BC34A'),
+  white: hexToRgb('#ffffff')
 };
 
 function hexToRgb(hex) {
@@ -75,8 +76,8 @@ class HueLights {
     return promiseify(this.api.config.bind(this.api));
   }
 
-  createUser() {
-    const fn = this.api.createUser.bind(this.api, this.hostname, APP_DESCRIPTION);
+  createUser(appDescription) {
+    const fn = this.api.createUser.bind(this.api, this.hostname, appDescription);
     return promiseify(fn).then(username => {
       this.username = username;
       this.api = new hue.api(this.hostname, this.username);
@@ -92,6 +93,15 @@ class HueLights {
     return promiseify(this.api.lights.bind(this.api)).then(result => result.lights);
   }
 
+  resetLights() {
+    const state = hue.lightState.create().on().rgb(COLORS.white)
+        .brightness(100).transition(1300);
+
+    return this.lights().then(lights => {
+      lights.map(light => this.api.setLightState(light.id, state));
+    });
+  }
+
   setLightsBasedOnScore(score) {
     let color = COLORS.poor;
     if (score > 45) {
@@ -102,11 +112,13 @@ class HueLights {
     }
 
     const state = hue.lightState.create().on().rgb(color).brightness(100);
+    // const state = hue.lightState.create().on();//.white(500, 100);
+    // const state = hue.lightState.create().on().brightness(100).transition(300);
+    // const state = hue.lightState.create().shortAlert();
+    // const state = hue.lightState.create().longAlert();
 
-    this.lights().then(lights => {
-      lights.forEach(light => {
-         this.api.setLightState(light.id, state);
-      });
+    return this.lights().then(lights => {
+      lights.map(light => this.api.setLightState(light.id, state));
     });
   }
 }

@@ -12,6 +12,7 @@
     "lighthouse": "^1.6.3",
     "node-hue-api": "^2.4.2",
     "open": "^0.0.5",
+    "play-sound": "^1.1.1",
     "yargs": "^7.0.2"
   }
 }
