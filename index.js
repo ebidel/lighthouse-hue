@@ -90,6 +90,29 @@ function runLighthouse() {
   });
 }
 
+/**
+ * Plays funny sound if score is low/high outlier.
+ * @param {number} score
+ */
+function playScoreSound(score) {
+  let file;
+
+  if (score >= SOUNDS.good.score) {
+    file = SOUNDS.good.file;
+  } else if (score <= SOUNDS.bad.score) {
+    file = SOUNDS.bad.file;
+  }
+
+  if (file) {
+    const audio = player.play(file, err => {
+      if (err && !err.killed) {
+        console.error(err);
+      }
+    });
+    // audio.kill();
+  }
+}
+
 createHueUserIfNeeded()
   .then(_ => lights.resetLights())
   .then(_ => runLighthouse())
@@ -99,21 +122,8 @@ createHueUserIfNeeded()
       opn(flags.outputPath, {wait: false});
     }
 
-    let file;
-    if (score >= SOUNDS.good.score) {
-      file = SOUNDS.good.file;
-    } else if (score <= SOUNDS.bad.score) {
-      file = SOUNDS.bad.file;
-    }
+    playScoreSound(score);
 
-    if (file) {
-      const audio = player.play(file, err => {
-        if (err && !err.killed) {
-          console.error(err);
-        }
-      });
-      // audio.kill();
-    }
   }).catch(err => {
     lights.resetLights();
     console.error(Log.redify(err));
