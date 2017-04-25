@@ -19,4 +19,8 @@ node index.js --view <URL>
 node index.js --output=json --output-path=results.json <URL>
 ```
 
-Testing a site should launch Chrome and run Lighthouse against the URL.
+You can also run the UI version which starts a web server on http://localhost:8080:
+
+    yarn start
+
+Both ways should should launch Chrome and run Lighthouse against the URL that you input.
