@@ -46,6 +46,7 @@ const flags = yargs
   .boolean(['view'])
   .default('output', 'html')
   .default('output-path', 'results.html')
+  .default('log-level', 'log')
   .argv;
 
 const url = yargs.argv._[0];

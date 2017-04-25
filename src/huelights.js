@@ -19,9 +19,9 @@
 const hue = require('node-hue-api');
 
 const COLORS = {
-  poor: hexToRgb('#eb211e'),
-  average: hexToRgb('#ffae00'),
-  good: hexToRgb('#8BC34A'),
+  poor: hexToRgb('#e53935'),
+  average: hexToRgb('#ef6c00'),
+  good: hexToRgb('#43a047'),
   white: hexToRgb('#ffffff')
 };
 
