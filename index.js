@@ -20,6 +20,7 @@ const fs = require('fs');
 const opn = require('opn');
 const yargs = require('yargs');
 const ReportGenerator = require('lighthouse/lighthouse-core/report/report-generator');
+const ReportGeneratorV2 = require('lighthouse/lighthouse-core/report/v2/report-generator');
 const Log = require('lighthouse/lighthouse-core/lib/log');
 const LighthouseRunner = require('./src/runner');
 const HueLights = require('./src/huelights');
@@ -43,16 +44,18 @@ const flags = yargs
   .version(() => require('./package.json').version)
   .alias('v', 'version')
   .showHelpOnFail(false, 'Specify --help for available options')
-  .boolean(['view'])
-  .default('output', 'html')
+  .boolean(['view', 'headless'])
+  .default('output', 'domhtml')
   .default('output-path', 'results.html')
-  .default('log-level', 'log')
+  .default('log-level', 'info')
   .argv;
 
 const url = yargs.argv._[0];
 
 const runner = new LighthouseRunner(url, flags);//, PERF_CONFIG);
 const lights = new HueLights(null, USERNAME);
+
+Log.setLevel(flags.logLevel);
 
 /**
  * Creates new "Lighthouse" user on the Hue bridge if needed.
@@ -81,8 +84,14 @@ function runLighthouse() {
   return runner.run().then(results => {
     results.artifacts = undefined; // prevent circular references in the JSON.
 
-    const reportGenerator = new ReportGenerator();
-    fs.writeFileSync(flags.outputPath, reportGenerator.generateHTML(results, 'cli'));
+    let html;
+    if (flags.output === 'domhtml') {
+      html = new ReportGeneratorV2().generateReportHtml(results);
+    } else {
+      html = new ReportGenerator().generateHTML(results, 'cli');
+    }
+
+    fs.writeFileSync(flags.outputPath, html);
 
     const score = runner.getOverallScore(results);
     runner.print(score);

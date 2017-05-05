@@ -15,16 +15,13 @@
  */
 'use strict';
 
-// const bodyParser = require('body-parser');
 const express = require('express');
-// const fetch = require('node-fetch'); // polyfill
-// const LighthouseCI = require('./lighthouse-ci');
+// const bodyParser = require('body-parser');
 // const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 
 const app = express();
 app.use(express.static('public'));
-// app.use(bodyParser.urlencoded({extended: true}));
 // app.use(bodyParser.json());
 
 app.get('/run', (req, res) => {
@@ -44,7 +41,12 @@ app.get('/run', (req, res) => {
     'Connection': 'keep-alive'
   });
 
-  const child = spawn('node', ['index.js', '--view', req.query.url]);
+  const args = ['index.js', '--view'];
+  if (Boolean(req.query.headless)) {
+    args.push('--headless');
+  }
+
+  const child = spawn('node', [...args, req.query.url]);
 
   child.stderr.on('data', data => {
     // res.write(`id: ${id}\n`);

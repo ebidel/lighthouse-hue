@@ -17,7 +17,7 @@
 'use strict';
 
 const lighthouse = require('lighthouse');
-const ChromeLauncher = require('lighthouse/lighthouse-cli/chrome-launcher.js').ChromeLauncher;
+const {ChromeLauncher} = require('lighthouse/lighthouse-cli/chrome-launcher.js');
 const Log = require('lighthouse/lighthouse-core/lib/log');
 
 const _SIGINT = 'SIGINT';
@@ -31,13 +31,14 @@ class LighthouseRunner {
   }
 
   _handleError(err) {
-    console.error(Log.redify(err));
+    Log.error('Lighthouse runner:', err);
   }
 
-  launchChrome() {
+  launchChrome(headless = this.flags.headless) {
     this.launcher = new ChromeLauncher({
       port: this.flags.port,
       autoSelectChrome: !this.flags.selectChrome,
+      additionalFlags: [headless ? '--headless' : '']
     });
 
     // Kill spawned Chrome process in case of ctrl-C.
@@ -51,7 +52,7 @@ class LighthouseRunner {
           return;
         }
 
-        console.log((`${Log.purple}Launching Chrome${Log.reset}`));
+        Log.log('Lighthouse runner:', 'Launching Chrome');
         return this.launcher.run();
       });
   }
@@ -59,8 +60,17 @@ class LighthouseRunner {
   run() {
     return this.launchChrome()
       .then(() => {
-        console.log(`${Log.yellow}Lighthouse:${Log.reset} running...`);
+        Log.log('Lighthouse runner:', 'running...');
         return lighthouse(this.url, this.flags, this.config);
+      })
+      .then(results => {
+        // Workaround for headless Chrome. Introduce slight delay before killing Chrome.
+        // See https://github.com/GoogleChrome/lighthouse/issues/1931
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve(results);
+          }, 10);
+        });
       })
       .then(results => this.launcher.kill().then(_ => results))
       .catch(err => {
@@ -71,6 +81,9 @@ class LighthouseRunner {
   }
 
   getOverallScore(lighthouseResults) {
+    if (lighthouseResults) {
+      return lighthouseResults.score; // v2
+    }
     const scoredAggregations = lighthouseResults.aggregations.filter(a => a.scored);
     const total = scoredAggregations.reduce((sum, aggregation) => {
       return sum + aggregation.total;
@@ -79,14 +92,7 @@ class LighthouseRunner {
   }
 
   print(score) {
-    let output = `${Log.red}${score}${Log.reset}`;
-    if (score > 45) {
-      output = `${Log.yellow}${score}${Log.reset}`
-    }
-    if (score > 75) {
-      output = `${Log.green}${score}${Log.reset}`
-    }
-    console.log(`${Log.yellow}Lighthouse${Log.reset} score: ${output}`);
+    Log.log('LIGHTHOUSE SCORE:', score);
   }
 }
 

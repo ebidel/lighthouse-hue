@@ -1,5 +1,6 @@
 [Lighthouse](https://github.com/GoogleChrome/lighthouse) changing the color
-of Philips Hue light bulbs based on overall report score.
+of [Philips Hue](https://www.developers.meethue.com/philips-hue-api) light bulbs
+based on overall report score.
 
 ### Get started
 

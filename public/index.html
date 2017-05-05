@@ -9,6 +9,9 @@
   <style>
     :root {
       --grey: #ccc;
+      --color-poor: #e53935;
+      --color-average: #ef6c00;
+      --color-good: #43a047;
     }
     * {
       box-sizing: border-box;
@@ -27,6 +30,15 @@
       flex-direction: column;
       background: #fafafa;
       -webkit-font-smoothing: antialiased;
+    }
+    body.good {
+      background: radial-gradient(ellipse at 50% 40%, transparent 15%,  var(--color-good))
+    }
+    body.average {
+      background: radial-gradient(ellipse at 50% 40%, transparent 15%,  var(--color-average));
+    }
+    body.poor {
+      background: radial-gradient(ellipse at 50% 40%, transparent 15%,  var(--color-poor));
     }
     h1, h2, h3 {
       font-weight: inherit;
@@ -97,7 +109,7 @@
       top: 0;
       left: 0;
       bottom: 16px;
-      padding: 16px;
+      padding: 32px;
       color: #aaa;
       resize: none;
     }
@@ -135,6 +147,21 @@
 const input = document.querySelector('#url');
 const logger = document.querySelector('#logger');
 
+/**
+ * @param {number} score
+ * @return {string}
+ */
+function calculateRating(score) {
+  let rating = 'poor';
+  if (score > 45) {
+    rating = 'average';
+  }
+  if (score > 75) {
+    rating = 'good';
+  }
+  return rating;
+}
+
 input.addEventListener('keydown', e => {
   const url = e.target.value;
 
@@ -148,21 +175,29 @@ input.addEventListener('keydown', e => {
       return;
     }
 
-    const source = new EventSource(`/run?url=${url}`);
+    const source = new EventSource(`/run?url=${url}`); //`/run?url=${url}&headless=true``
 
     source.addEventListener('message', e => {
       if (e.data === 'done') {
         source.close();
-        logger.value = '';
-        input.value = '';
+        // logger.value = '';
+        // input.value = '';
         return;
       }
+
       logger.value += e.data + '\n';
       logger.scrollTop = logger.scrollHeight;
+
+      const match = e.data.match(/.*LIGHTHOUSE SCORE:\s+(.*)$/);
+      if (match) {
+        document.body.classList.add(calculateRating(match[1]));
+        return;
+      }
     })
 
     source.addEventListener('open', e => {
       logger.value = '';
+      document.body.className = '';
     });
 
     source.addEventListener('error', e => {
