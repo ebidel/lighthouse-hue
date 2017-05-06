@@ -65,7 +65,7 @@ body.running .logo-nolight {
 }
 body.done #lighthouse-report {
   pointer-events: initial;
-  transform: translateY(150%);
+  transform: translateY(200%);
   opacity: 1;
 }
 h1, h2, h3 {
