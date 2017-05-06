@@ -41,8 +41,8 @@ app.get('/run', (req, res) => {
     'Connection': 'keep-alive'
   });
 
-  const args = ['index.js', '--view'];
-  if (Boolean(req.query.headless)) {
+  const args = ['index.js'];;//['index.js', '--view'];
+  if (req.query.headless === 'true') {
     args.push('--headless');
   }
 

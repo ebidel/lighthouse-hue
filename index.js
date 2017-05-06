@@ -46,7 +46,7 @@ const flags = yargs
   .showHelpOnFail(false, 'Specify --help for available options')
   .boolean(['view', 'headless'])
   .default('output', 'domhtml')
-  .default('output-path', 'results.html')
+  .default('output-path', './public/results.html')
   .default('log-level', 'info')
   .argv;
 
