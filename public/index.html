@@ -17,9 +17,9 @@
   </div>
   <div class="url-section">
     <input type="url" id="url" placeholder="Enter a URL" autofocus>
-    <div id="lighthouse-score"></div>
+    <div id="lighthouse-score" title="Site's Lighthouse score"></div>
     <div id="lighthouse-report">
-      <a href="results.html" target="lh-report">Open report &rarr;</a>
+      <a href="results.html" target="lh-report" tabindex="-1">Open report &rarr;</a>
     </div>
     <div class="useheadless-setting">
       <label><input type="checkbox" id="useheadless"> Use Headless Chrome</label>
@@ -27,7 +27,7 @@
   </div>
 </main>
 
-<textarea id="logger" readonly></textarea>
+<textarea id="logger" readonly aria-hidden="true" tabindex="-1"></textarea>
 
 <footer>
   <h2>Powered by <a href="https://github.com/GoogleChrome/lighthouse" target="_blank">Lighthouse</a></h2>
@@ -51,7 +51,7 @@
 const input = document.querySelector('#url');
 const logger = document.querySelector('#logger');
 const scoreEl = document.querySelector('#lighthouse-score');
-const reportLink = document.querySelector('#lighthouse-report');
+const reportLink = document.querySelector('#lighthouse-report a');
 const background = document.querySelector('#background');
 
 /**
@@ -83,7 +83,8 @@ function finalizeRun() {
     scoreEl.textContent = score;
     scoreEl.classList.add(rating);
     document.body.classList.add(rating, 'done');
-    // document.querySelector('#useheadless').checked = false;
+    reportLink.tabIndex = 0;
+    reportLink.focus();
 
     ga('send', 'event', 'Lighthouse', 'finish run');
   } else {
@@ -97,6 +98,7 @@ function finalizeRun() {
 function resetUI() {
   logger.value = '';
   document.body.className = '';
+  reportLink.tabIndex = -1;
   scoreEl.textContent = '';
 }
 
@@ -147,7 +149,7 @@ input.addEventListener('keydown', e => {
 
 document.addEventListener('click', e => input.focus());
 
-document.querySelector('#lighthouse-report a').addEventListener('click', e => {
+reportLink.addEventListener('click', e => {
   ga('send', 'event', 'Lighthouse', 'open report');
 });
 
