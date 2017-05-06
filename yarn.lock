@@ -579,9 +579,9 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
-lighthouse@GoogleChrome/lighthouse#master:
+"lighthouse@https://github.com/GoogleChrome/lighthouse.git":
   version "2.0.0-alpha.1"
-  resolved "https://codeload.github.com/GoogleChrome/lighthouse/tar.gz/cdb2a890fa2afadca10b176c528c15ccf9d7dde9"
+  resolved "https://github.com/GoogleChrome/lighthouse.git#034299916e397cd062a8bad369aa3dff4138de79"
   dependencies:
     axe-core "2.2.0"
     chrome-devtools-frontend "1.0.422034"
