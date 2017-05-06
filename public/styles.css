@@ -4,6 +4,17 @@
   --color-average: #ef6c00;
   --color-good: #43a047;
 }
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 * {
   box-sizing: border-box;
 }
@@ -50,7 +61,7 @@ body.poor #background {
   box-shadow: 0px 0px 100px -20px var(--color-poor) inset;
 }
 body.running .logo-nolight {
-  opacity: 1;
+  animation-name: blink;
 }
 body.done #lighthouse-report {
   pointer-events: initial;
@@ -125,8 +136,11 @@ footer {
 }
 .logo-nolight {
   position: absolute;
-  transition: all 1s ease-in-out 500ms;
   opacity: 0;
+  animation-duration: 2.5s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
 #logger {
   width: 100%;
