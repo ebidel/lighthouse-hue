@@ -82,7 +82,7 @@ footer {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 32px;
+  bottom: 16px;
   text-align: center;
   color: #ccc;
   transition: opacity 300ms ease-in-out;
@@ -94,6 +94,7 @@ footer {
   margin-bottom: -30px;
   margin-left: -16px;
   flex-shrink: 0;
+  background: radial-gradient(ellipse at 50% 50%, #fafafa 25%, transparent);
 }
 .logo-section h2 {
   align-self: center;

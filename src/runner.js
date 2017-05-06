@@ -38,7 +38,11 @@ class LighthouseRunner {
     this.launcher = new ChromeLauncher({
       port: this.flags.port,
       autoSelectChrome: !this.flags.selectChrome,
-      additionalFlags: [headless ? '--headless' : '']
+      additionalFlags: [
+        '--window-position=40,100',
+        '--window-size=412,732', // Nexus 5x
+        headless ? '--headless' : ''
+      ]
     });
 
     // Kill spawned Chrome process in case of ctrl-C.

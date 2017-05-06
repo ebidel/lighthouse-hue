@@ -129,7 +129,7 @@ input.addEventListener('keydown', e => {
         return;
       }
 
-      logger.value += e.data + '\n';
+      logger.value += e.data.replace(/.*GMT\s/, '') + '\n';
       logger.scrollTop = logger.scrollHeight;
     })
 
