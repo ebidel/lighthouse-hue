@@ -44,7 +44,7 @@ const flags = yargs
   .version(() => require('./package.json').version)
   .alias('v', 'version')
   .showHelpOnFail(false, 'Specify --help for available options')
-  .boolean(['view', 'headless'])
+  .boolean(['reset', 'view', 'headless'])
   .default('output', 'domhtml')
   .default('output-path', './public/results.html')
   .default('log-level', 'info')
@@ -123,8 +123,19 @@ function playScoreSound(score) {
   }
 }
 
+if (flags.reset) {
+  createHueUserIfNeeded().then(username => {
+    console.log(`${Log.purple}Hue user:${Log.reset} ${username}`);
+    lights.resetLights();
+  });
+  return;
+}
+
 createHueUserIfNeeded()
-  .then(_ => lights.resetLights())
+  .then(username => {
+    console.log(`${Log.purple}Hue user:${Log.reset} ${username}`);
+    lights.resetLights();
+  })
   .then(_ => runLighthouse())
   .then(score => lights.setLightsBasedOnScore(score).then(_ => score))
   .then(score => {

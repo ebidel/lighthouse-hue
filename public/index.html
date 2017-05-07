@@ -11,9 +11,9 @@
 <body>
 
 <main>
-  <div class="logo-section">
-    <img src="logo-nolight.png" class="logo" title="Lighthouse logo">
-    <img src="logo.svg" class="logo logo-nolight" title="Lighthouse logo">
+  <div class="logo-section" title="Click to start over">
+    <img src="logo-nolight.png" class="logo" alt="Lighthouse logo">
+    <img src="logo.svg" class="logo logo-nolight" alt="Lighthouse logo">
   </div>
   <div class="url-section">
     <input type="url" id="url" placeholder="Enter a URL" autofocus>
@@ -53,6 +53,7 @@ const logger = document.querySelector('#logger');
 const scoreEl = document.querySelector('#lighthouse-score');
 const reportLink = document.querySelector('#lighthouse-report a');
 const background = document.querySelector('#background');
+const logo = document.querySelector('.logo-section');
 
 /**
  * @param {number} score
@@ -148,6 +149,15 @@ input.addEventListener('keydown', e => {
 });
 
 document.addEventListener('click', e => input.focus());
+
+logo.addEventListener('click', e => {
+  if (document.body.classList.contains('done')) {
+    fetch('reset');
+    resetUI();
+    input.value = null;
+    document.querySelector('#useheadless').checked = false;
+  }
+});
 
 reportLink.addEventListener('click', e => {
   ga('send', 'event', 'Lighthouse', 'open report');

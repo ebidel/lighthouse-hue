@@ -19,23 +19,26 @@
 const hue = require('node-hue-api');
 
 const COLORS = {
-  poor: hexToRgb('#e53935'),
-  average: hexToRgb('#ef6c00'),
-  good: hexToRgb('#43a047'),
-  white: hexToRgb('#ffffff')
+  // poor: hexToRgb('#e53935'),
+  // average: hexToRgb('#ef6c00'),
+  // good: hexToRgb('#43a047'),
+  poor: 65463,
+  average: 5842,
+  good: 24460,
+  white: 41564
 };
 
-function hexToRgb(hex) {
-  if (hex.startsWith('#')) {
-    hex = hex.slice(1);
-  }
+// function hexToRgb(hex) {
+//   if (hex.startsWith('#')) {
+//     hex = hex.slice(1);
+//   }
 
-  const bigint = parseInt(hex, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return [r, g, b];
-}
+//   const bigint = parseInt(hex, 16);
+//   const r = (bigint >> 16) & 255;
+//   const g = (bigint >> 8) & 255;
+//   const b = bigint & 255;
+//   return [r, g, b];
+// }
 
 /**
  * Turn a callback into a Promise.
@@ -94,8 +97,8 @@ class HueLights {
   }
 
   resetLights() {
-    const state = hue.lightState.create().on().rgb(COLORS.white)
-        .brightness(100).transition(1300);
+    const state = hue.lightState.create().on().hue(COLORS.white)
+        .bri(255).sat(0).transition(1500);
 
     return this.lights().then(lights => {
       lights.map(light => this.api.setLightState(light.id, state));
@@ -111,7 +114,7 @@ class HueLights {
       color = COLORS.good;
     }
 
-    const state = hue.lightState.create().on().rgb(color).brightness(100);
+    const state = hue.lightState.create().on().hue(color).bri(255).sat(255);
     // const state = hue.lightState.create().on();//.white(500, 100);
     // const state = hue.lightState.create().on().brightness(100).transition(300);
     // const state = hue.lightState.create().shortAlert();

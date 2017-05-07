@@ -17,7 +17,7 @@
 
 const express = require('express');
 // const bodyParser = require('body-parser');
-// const exec = require('child_process').exec;
+const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 
 const app = express();
@@ -57,6 +57,12 @@ app.get('/run', (req, res) => {
   child.on('close', code => {
     res.write(`data: done\n\n`);
     res.status(410).end();
+  });
+});
+
+app.get('/reset', (req, res) => {
+  exec(`node index.js --reset`, (err, stdout, stderr) => {
+    res.status(200).send('reset');
   });
 });
 
