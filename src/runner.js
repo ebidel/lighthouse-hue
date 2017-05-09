@@ -38,7 +38,7 @@ class LighthouseRunner {
     this.launcher = new ChromeLauncher({
       port: this.flags.port,
       autoSelectChrome: !this.flags.selectChrome,
-      additionalFlags: [
+      chromeFlags: [
         '--window-position=40,100',
         '--window-size=412,732', // Nexus 5x
         headless ? '--headless' : ''
