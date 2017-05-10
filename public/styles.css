@@ -1,5 +1,5 @@
 :root {
-  --grey: #ccc;
+  --grey: #aaa;
   --color-poor: #e53935;
   --color-average: #ef6c00;
   --color-good: #43a047;
@@ -84,7 +84,7 @@ footer {
   right: 0;
   bottom: 16px;
   text-align: center;
-  color: #ccc;
+  color: var(--grey);
   transition: opacity 300ms ease-in-out;
 }
 .logo-section {
@@ -95,12 +95,6 @@ footer {
   margin-left: -16px;
   flex-shrink: 0;
   background: radial-gradient(ellipse at 50% 50%, #fafafa 25%, transparent);
-}
-.logo-section h2 {
-  align-self: center;
-  margin: 0 0 0 16px;
-  font-size: 40px;
-  color: #ccc;
 }
 .logo {
   cursor: pointer;
@@ -157,7 +151,7 @@ footer {
   bottom: 30px;
   padding: 0 50px 50px 50px;
   margin-top: 40px;
-  color: #ccc;
+  color: #bbb;
   resize: none;
   font-size: 14px;
 }
@@ -198,7 +192,7 @@ footer {
 .useheadless-setting {
   align-self: flex-end;
   margin-top: 12px;
-  color: #ccc;
+  color: var(--grey);
 }
 .useheadless-setting label {
   display: flex;
@@ -207,13 +201,13 @@ footer {
   padding-right: 4px;
 }
 .useheadless-setting label:hover {
-  color: #aaa;
+  color: #777;
 }
 input[type="checkbox"] {
   -webkit-appearance: none;
   height: 20px;
   width: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--grey);
   position: relative;
   border-radius: 50%;
   overflow: hidden;
@@ -226,7 +220,7 @@ input[type="checkbox"]:checked {
   border-color: darkgreen;
 }
 input[type="checkbox"]:not(:checked):hover {
-  border: 1px solid #aaa;
+  border: 1px solid #777;
 }
 input[type="checkbox"]:before {
   position: absolute;

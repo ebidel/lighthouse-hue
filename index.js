@@ -62,18 +62,18 @@ Log.setLevel(flags.logLevel);
  */
 function createHueUserIfNeeded() {
   return lights.setHostnameOfBridge()
-  .then(hostname => lights.config())
-  .then(config => {
-    // Username is registered with the Hue.
-    if ('linkbutton' in config) {
-      console.log(`${Log.purple}Hue:${Log.reset} Re-using known user`);
-      return lights.username;
-    }
+    .then(hostname => lights.config())
+    .then(config => {
+      // Username is registered with the Hue.
+      if ('linkbutton' in config) {
+        console.log(`${Log.purple}Hue:${Log.reset} Re-using known user`);
+        return lights.username;
+      }
 
-    console.log(`${Log.purple}Hue:${Log.reset} Creating new user on bridge.`);
+      console.log(`${Log.purple}Hue:${Log.reset} Creating new user on bridge.`);
 
-    return lights.createUser(APP_DESCRIPTION);
-  });
+      return lights.createUser(APP_DESCRIPTION);
+    });
 }
 
 /**
@@ -136,6 +136,9 @@ createHueUserIfNeeded()
     console.log(`${Log.purple}Hue user:${Log.reset} ${username}`);
     lights.resetLights();
   })
+  .catch(err => {
+    Log.log('Lighthouse runner:', 'Hue Lights unavailable.');
+  })
   .then(_ => runLighthouse())
   .then(score => lights.setLightsBasedOnScore(score).then(_ => score))
   .then(score => {
@@ -151,7 +154,8 @@ createHueUserIfNeeded()
   });
 
 process.on('unhandledRejection', reason => {
-  console.log(reason);
+  // Log.log('Lighthouse runner:', reason);
+  console.log('Lighthouse runner:', reason);
 });
 
 // module.exports = LigthouseRunner;
