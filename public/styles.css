@@ -103,14 +103,14 @@ footer {
   --shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
   --hover-shadow: 0 3px 8px 0 rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08);
   border: none;
-  height: 50px;
+  height: var(--url-section-height);
   width: 100%;
   outline: none;
-  border-radius: 2px;
+  border-radius: var(--url-section-border-radius);
   box-shadow: var(--shadow);
   transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
   padding: 0 16px;
-  padding-right: 64px;
+  padding-right: calc(8px * 14);
   font: inherit;
   z-index: 1;
 }
@@ -156,18 +156,42 @@ footer {
   font-size: 14px;
 }
 .url-section {
+  --url-section-height: 50px;
+  --url-section-border-radius: 2px;
   display: flex;
   flex-direction: column;
   position: relative;
 }
+.search-arrow {
+  background: linear-gradient(to bottom, transparent 60%, #eee);
+  border-left: 1px solid #ddd;
+  cursor: pointer;
+  color: #555;
+  border-bottom-left-radius: var(--url-section-border-radius);
+  border-bottom-right-radius: var(--url-section-border-radius);
+  font-size: 30px;
+  height: var(--url-section-height);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  padding: 8px;
+  z-index: 2;
+}
+.search-arrow:hover {
+  box-shadow: -3px 0px 3px #eee;
+}
 #lighthouse-score {
   font-size: 24px;
   position: absolute;
+  right: calc(8px * 6);
   display: flex;
   align-items: center;
   align-self: flex-end;
   padding: 8px;
-  z-index: 2;
+  z-index: 1;
+  pointer-events: none;
 }
 #lighthouse-score.good {
   color: var(--color-good);

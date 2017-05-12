@@ -17,6 +17,7 @@
   </div>
   <div class="url-section">
     <input type="url" id="url" placeholder="Enter a URL" autofocus>
+    <div class="search-arrow">&rarr;</div>
     <div id="lighthouse-score" title="Site's Lighthouse score"></div>
     <div id="lighthouse-report">
       <a href="results.html" target="lh-report" tabindex="-1">Open report &rarr;</a>
@@ -54,6 +55,7 @@ const scoreEl = document.querySelector('#lighthouse-score');
 const reportLink = document.querySelector('#lighthouse-report a');
 const background = document.querySelector('#background');
 const logo = document.querySelector('.logo-section');
+const searchArrow = document.querySelector('.search-arrow');
 
 /**
  * @param {number} score
@@ -70,9 +72,6 @@ function calculateRating(score) {
   return rating;
 }
 
-/**
- * @param {string} log
- */
 function finalizeRun() {
   const match = logger.value.match(/.*LIGHTHOUSE SCORE:\s+(.*)/);
   if (match) {
@@ -103,48 +102,49 @@ function resetUI() {
   scoreEl.textContent = '';
 }
 
-input.addEventListener('keydown', e => {
-  const url = e.target.value;
-
-  if (!url.length) {
+/**
+ * @param {string} url URL to test in Lighthouse.
+ */
+function runLighthouse(url) {
+  if (!url.length || !input.validity.valid) {
+    alert('URL is not valid');
     return;
   }
 
-  if (e.keyCode === 13) { // Enter
-    if (!e.target.validity.valid) {
-      alert('URL is not valid');
+  let endpoint = `/run?url=${url}`;
+  if (document.querySelector('#useheadless').checked) {
+    endpoint += '&headless=true';
+  }
+
+  const source = new EventSource(endpoint);
+
+  source.addEventListener('message', e => {
+    if (e.data === 'done') {
+      source.close();
+      finalizeRun();
       return;
     }
 
-    let endpoint = `/run?url=${url}`;
-    if (document.querySelector('#useheadless').checked) {
-      endpoint += '&headless=true';
+    logger.value += e.data.replace(/.*GMT\s/, '') + '\n';
+    logger.scrollTop = logger.scrollHeight;
+  })
+
+  source.addEventListener('open', e => {
+    resetUI();
+    document.body.classList.add('running');
+    ga('send', 'event', 'Lighthouse', 'start run');
+  });
+
+  source.addEventListener('error', e => {
+    if (e.readyState === EventSource.CLOSED) {
+      source.close();
     }
+  });
+}
 
-    const source = new EventSource(endpoint);
-
-    source.addEventListener('message', e => {
-      if (e.data === 'done') {
-        source.close();
-        finalizeRun();
-        return;
-      }
-
-      logger.value += e.data.replace(/.*GMT\s/, '') + '\n';
-      logger.scrollTop = logger.scrollHeight;
-    })
-
-    source.addEventListener('open', e => {
-      resetUI();
-      document.body.classList.add('running');
-      ga('send', 'event', 'Lighthouse', 'start run');
-    });
-
-    source.addEventListener('error', e => {
-      if (e.readyState === EventSource.CLOSED) {
-        source.close();
-      }
-    });
+input.addEventListener('keydown', e => {
+  if (e.keyCode === 13) { // Enter
+    runLighthouse(e.target.value);
   }
 });
 
@@ -157,6 +157,10 @@ logo.addEventListener('click', e => {
     input.value = null;
     document.querySelector('#useheadless').checked = false;
   }
+});
+
+searchArrow.addEventListener('click', e => {
+  runLighthouse(input.value);
 });
 
 reportLink.addEventListener('click', e => {
