@@ -31,6 +31,7 @@ const player = require('play-sound')({});
 
 const APP_DESCRIPTION = 'Lighthouse';
 const USERNAME = fs.readFileSync('.hueusername', 'utf8');
+const BRIDGE_IP = fs.readFileSync('.bridgeipaddress', 'utf8') || null;
 
 const SOUNDS = {
   good: {score: 95, file: './src/audio/shiphorn.mp3'},
@@ -53,7 +54,7 @@ const flags = yargs
 const url = yargs.argv._[0];
 
 const runner = new LighthouseRunner(url, flags);//, PERF_CONFIG);
-const lights = new HueLights(null, USERNAME);
+const lights = new HueLights(BRIDGE_IP, USERNAME);
 
 Log.setLevel(flags.logLevel);
 
@@ -61,7 +62,9 @@ Log.setLevel(flags.logLevel);
  * Creates new "Lighthouse" user on the Hue bridge if needed.
  */
 function createHueUserIfNeeded() {
-  return lights.setHostnameOfBridge()
+  const setHostNamePromise = BRIDGE_IP ? Promise.resolve(BRIDGE_IP) :
+                                         lights.setHostnameOfBridge();
+  return setHostNamePromise
     .then(hostname => lights.config())
     .then(config => {
       // Username is registered with the Hue.
