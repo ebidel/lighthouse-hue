@@ -61,10 +61,11 @@ function promiseify(fn, ...args) {
 }
 
 class HueLights {
-  constructor(hostname=null, username=null) {
-    this.hostname = hostname;
+  constructor(hostname = null, username = null) {
+    const [ipaddress, port] = hostname.split(':');
+    this.hostname = ipaddress;
     this.username = username;
-    this.api = new hue.api(this.hostname, this.username);
+    this.api = new hue.api(this.hostname, this.username, null, port);
   }
 
   setHostnameOfBridge() {
@@ -94,6 +95,20 @@ class HueLights {
 
   lights() {
     return promiseify(this.api.lights.bind(this.api)).then(result => result.lights);
+  }
+
+  /**
+   * Turns off all lights on the bridge.
+   * @param {number} transition Transition time. Defaults to 500.
+   */
+  turnAllLightsOff(transition = 500) {
+    const state = hue.lightState.create().transition(transition).off();
+
+    return this.lights().then(lights => {
+      lights.forEach(light => {
+        this.api.setLightState(light.id, state);
+      });
+    });
   }
 
   resetLights() {

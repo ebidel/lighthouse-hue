@@ -34,7 +34,7 @@ const USERNAME = fs.readFileSync('.hueusername', 'utf8');
 const BRIDGE_IP = fs.readFileSync('.bridgeipaddress', 'utf8') || null;
 
 const SOUNDS = {
-  good: {score: 95, file: './src/audio/shiphorn.mp3'},
+  good: {score: 90, file: './src/audio/harbor.mp3'},
   bad: {score: 20, file: './src/audio/foghorn.mp3'}
 };
 
