@@ -16,11 +16,12 @@
     <img src="logo.svg" class="logo logo-nolight" alt="Lighthouse logo">
   </div>
   <div class="url-section">
-    <input type="url" id="url" placeholder="Enter a URL" autofocus>
-    <div class="search-arrow">&rarr;</div>
+    <input type="url" id="url" placeholder="Enter a URL" autocomplete="off">
+    <div class="search-arrow">&rsaquo;</div>
     <div id="lighthouse-score" title="Site's Lighthouse score"></div>
     <div id="lighthouse-report">
-      <a href="results.html" target="lh-report" tabindex="-1">Open report &rarr;</a>
+      <a href="#" id="startover" class="button" tabindex="-1">Start over &#10226;</a>
+      <a href="results.html" class="button" target="lh-report" tabindex="-1">Open report &#10147;</a>
     </div>
     <div class="useheadless-setting">
       <label><input type="checkbox" id="useheadless"> Use Headless Chrome</label>
@@ -45,129 +46,6 @@
   ga('create', 'UA-85519014-4', 'auto');
   ga('send', 'pageview');
 </script>
-<script>
-(function() {
-'use strict';
-
-const input = document.querySelector('#url');
-const logger = document.querySelector('#logger');
-const scoreEl = document.querySelector('#lighthouse-score');
-const reportLink = document.querySelector('#lighthouse-report a');
-const background = document.querySelector('#background');
-const logo = document.querySelector('.logo-section');
-const searchArrow = document.querySelector('.search-arrow');
-
-/**
- * @param {number} score
- * @return {string}
- */
-function calculateRating(score) {
-  let rating = 'poor';
-  if (score > 45) {
-    rating = 'average';
-  }
-  if (score > 75) {
-    rating = 'good';
-  }
-  return rating;
-}
-
-function finalizeRun() {
-  const match = logger.value.match(/.*LIGHTHOUSE SCORE:\s+(.*)/);
-  if (match) {
-    let score = Number(match[1]);
-    score = score.toLocaleString(undefined, {maximumFractionDigits: 1});
-
-    const rating = calculateRating(score);
-
-    scoreEl.textContent = score;
-    scoreEl.classList.add(rating);
-    document.body.classList.add(rating, 'done');
-    reportLink.tabIndex = 0;
-    reportLink.focus();
-
-    ga('send', 'event', 'Lighthouse', 'finish run');
-  } else {
-    const split = logger.value.split('\n');
-    ga('send', 'event', 'Lighthouse', 'error', split[split.length - 2]);
-  }
-
-  document.body.classList.remove('running');
-}
-
-function resetUI() {
-  logger.value = '';
-  document.body.className = '';
-  reportLink.tabIndex = -1;
-  scoreEl.textContent = '';
-}
-
-/**
- * @param {string} url URL to test in Lighthouse.
- */
-function runLighthouse(url) {
-  if (!url.length || !input.validity.valid) {
-    alert('URL is not valid');
-    return;
-  }
-
-  let endpoint = `/run?url=${url}`;
-  if (document.querySelector('#useheadless').checked) {
-    endpoint += '&headless=true';
-  }
-
-  const source = new EventSource(endpoint);
-
-  source.addEventListener('message', e => {
-    if (e.data === 'done') {
-      source.close();
-      finalizeRun();
-      return;
-    }
-
-    logger.value += e.data.replace(/.*GMT\s/, '') + '\n';
-    logger.scrollTop = logger.scrollHeight;
-  })
-
-  source.addEventListener('open', e => {
-    resetUI();
-    document.body.classList.add('running');
-    ga('send', 'event', 'Lighthouse', 'start run');
-  });
-
-  source.addEventListener('error', e => {
-    if (e.readyState === EventSource.CLOSED) {
-      source.close();
-    }
-  });
-}
-
-input.addEventListener('keydown', e => {
-  if (e.keyCode === 13) { // Enter
-    runLighthouse(e.target.value);
-  }
-});
-
-document.addEventListener('click', e => input.focus());
-
-logo.addEventListener('click', e => {
-  if (document.body.classList.contains('done')) {
-    fetch('reset');
-    resetUI();
-    input.value = null;
-    document.querySelector('#useheadless').checked = false;
-  }
-});
-
-searchArrow.addEventListener('click', e => {
-  runLighthouse(input.value);
-});
-
-reportLink.addEventListener('click', e => {
-  ga('send', 'event', 'Lighthouse', 'open report');
-});
-
-})();
-</script>
+<script src="app.js"></script>
 </body>
 </html>

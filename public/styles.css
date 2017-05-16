@@ -22,6 +22,9 @@ html, body {
   height: 100vh;
   margin: 0;
 }
+.hidden {
+  display: none !important;
+}
 body {
   line-height: 1.6;
   font-family: 'Product Sans', Arial, sans-serif;
@@ -110,7 +113,7 @@ footer {
   box-shadow: var(--shadow);
   transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
   padding: 0 16px;
-  padding-right: calc(8px * 14);
+  padding-right: calc(8px * 12);
   font: inherit;
   z-index: 1;
 }
@@ -185,7 +188,7 @@ footer {
 #lighthouse-score {
   font-size: 24px;
   position: absolute;
-  right: calc(8px * 6);
+  right: calc(8px * 4);
   display: flex;
   align-items: center;
   align-self: flex-end;
@@ -203,15 +206,24 @@ footer {
   color: var(--color-poor);
 }
 #lighthouse-report {
-  transition: transform 400ms cubic-bezier(0.18, 0.89, 0.32, 1.28) 500ms;
+  transition: all 400ms cubic-bezier(0.18, 0.89, 0.32, 1.28) 500ms;
   position: absolute;
   display: flex;
   align-self: center;
   pointer-events: none;
+  width: 270px;
+  opacity: 0;
+  display: flex;
+  justify-content: space-between;
+}
+#lighthouse-report .button {
   padding: 8px 16px;
   background: rgb(50,109,255);
   color: #fff;
-  border-radius: 12px;
+  border-radius: 4px;
+}
+#lighthouse-report .button:hover {
+  font-weight: 600;
 }
 .useheadless-setting {
   align-self: flex-end;
@@ -262,3 +274,16 @@ input[type="checkbox"]:checked:before {
 /*input[type="checkbox"]:hover:before {
   background: darkgreen;
 }*/
+
+html.kiosk {
+  pointer-events: none;
+}
+
+.kiosk #lighthouse-score {
+  right: 8px;
+}
+
+.kiosk .useheadless-setting,
+.kiosk .search-arrow {
+  display: none;
+}

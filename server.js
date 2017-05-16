@@ -18,6 +18,7 @@
 const express = require('express');
 // const bodyParser = require('body-parser');
 const exec = require('child_process').exec;
+const opn = require('opn');
 const spawn = require('child_process').spawn;
 
 const app = express();
@@ -70,4 +71,6 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
   console.log('Press Ctrl+C to quit.');
+  opn(`http://localhost:${PORT}`, {wait: false});
+  opn(`http://localhost:${PORT}?kiosk`, {wait: false});
 });
