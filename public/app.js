@@ -184,6 +184,8 @@ function attachEventListeners() {
   startOver.addEventListener('click', e => {
     e.preventDefault();
     resetUI();
+    input.value = null;
+    document.querySelector('#useheadless').checked = false;
   });
 
   reportLink.addEventListener('click', e => {

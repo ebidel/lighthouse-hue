@@ -283,6 +283,7 @@ html.kiosk {
   right: 8px;
 }
 
+.kiosk #lighthouse-report,
 .kiosk .useheadless-setting,
 .kiosk .search-arrow {
   display: none;

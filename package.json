@@ -4,15 +4,14 @@
   "description": "Lighthouse score on Philips Hue light bulbs",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "postinstall": "cd node_modules/lighthouse && yarn install && yarn install-cli && gulp && yarn build-cli"
+    "start": "node server.js"
   },
   "author": "Eric Bidelman <ebidel@>",
   "license": "Apache-2.0",
   "dependencies": {
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
-    "lighthouse": "https://github.com/GoogleChrome/lighthouse.git",
+    "lighthouse": "^2.0.0-alpha.6",
     "node-hue-api": "^2.4.2",
     "open": "^0.0.5",
     "play-sound": "^1.1.1",

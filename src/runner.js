@@ -17,7 +17,7 @@
 'use strict';
 
 const lighthouse = require('lighthouse');
-const {ChromeLauncher} = require('lighthouse/lighthouse-cli/chrome-launcher.js');
+const ChromeLauncher = require('lighthouse/chrome-launcher/chrome-launcher.js');
 const Log = require('lighthouse/lighthouse-core/lib/log');
 
 const _SIGINT = 'SIGINT';
@@ -35,35 +35,26 @@ class LighthouseRunner {
   }
 
   launchChrome(headless = this.flags.headless) {
-    this.launcher = new ChromeLauncher({
-      port: this.flags.port,
-      autoSelectChrome: !this.flags.selectChrome,
+    Log.log('Lighthouse runner:', 'Launching Chrome');
+
+    return ChromeLauncher.launch({
       chromeFlags: [
         '--window-position=40,100',
         '--window-size=412,732', // Nexus 5x
         headless ? '--headless' : ''
       ]
+    }).then(chrome => {
+      this.flags.port = chrome.port;
+      return chrome;
     });
-
-    // Kill spawned Chrome process in case of ctrl-C.
-    process.on(_SIGINT, () => {
-      this.launcher.kill().then(() => process.exit(_SIGINT_EXIT_CODE), this._handleError);
-    });
-
-    return this.launcher.isDebuggerReady()
-      .catch(() => {
-        if (this.flags.skipAutolaunch) {
-          return;
-        }
-
-        Log.log('Lighthouse runner:', 'Launching Chrome');
-        return this.launcher.run();
-      });
   }
 
   run() {
+    let launchedChrome;
+
     return this.launchChrome()
-      .then(() => {
+      .then(chrome => {
+        launchedChrome = chrome;
         Log.log('Lighthouse runner:', 'running...');
         return lighthouse(this.url, this.flags, this.config);
       })
@@ -76,9 +67,9 @@ class LighthouseRunner {
           }, 10);
         });
       })
-      .then(results => this.launcher.kill().then(_ => results))
+      .then(results => launchedChrome.kill().then(_ => results))
       .catch(err => {
-        return this.launcher.kill().then(() => {
+        return launchedChrome.kill().then(() => {
           throw err;
         }, this._handleError);
       });
