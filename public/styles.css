@@ -53,15 +53,15 @@ main {
 }
 body.good #background {
   opacity: 1;
-  box-shadow: 0px 0px 100px -20px var(--color-good) inset;
+  box-shadow: 0px 0px 100px var(--color-good) inset;
 }
 body.average #background {
   opacity: 1;
-  box-shadow: 0px 0px 100px -20px var(--color-average) inset;
+  box-shadow: 0px 0px 100px var(--color-average) inset;
 }
 body.poor #background {
   opacity: 1;
-  box-shadow: 0px 0px 100px -20px var(--color-poor) inset;
+  box-shadow: 0px 0px 100px var(--color-poor) inset;
 }
 body.running .logo-nolight {
   animation-name: blink;
@@ -98,9 +98,14 @@ footer {
   margin-left: -16px;
   flex-shrink: 0;
   background: radial-gradient(ellipse at 50% 50%, #fafafa 25%, transparent);
+  position: relative;
+}
+.logo-section h1 {
+  display: none;
 }
 .logo {
   cursor: pointer;
+  top: 0;
 }
 #url {
   --shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
@@ -278,13 +283,45 @@ input[type="checkbox"]:checked:before {
 html.kiosk {
   pointer-events: none;
 }
-
 .kiosk #lighthouse-score {
-  right: 8px;
+  top: 50px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  text-align: center;
+  display: block;
+  font-size: 100px;
 }
-
 .kiosk #lighthouse-report,
 .kiosk .useheadless-setting,
 .kiosk .search-arrow {
   display: none;
+}
+.kiosk .logo-section h1 {
+  font-size: 80px;
+  color: rgb(23,27,162);
+  display: block;
+  margin: -140px -26px 100px 0;
+  text-transform: uppercase;
+}
+.kiosk .logo-section {
+  flex-direction: column;
+  align-items: center;
+  margin-top: -500px;
+}
+.kiosk .logo {
+  height: 600px;
+  width: 600px;
+}
+.kiosk .url-section {
+  font-size: 35px;
+}
+.kiosk #url {
+  background: none;
+  text-align: center;
+  padding: 0;
+  box-shadow: none;
+}
+.kiosk #logger {
+  font-size: 20px;
 }

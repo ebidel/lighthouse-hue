@@ -62,8 +62,11 @@ function promiseify(fn, ...args) {
 
 class HueLights {
   constructor(hostname=null, username=null) {
-    const [ipaddress, port] = hostname.split(':');
-    this.hostname = ipaddress;
+    let port = null;
+    if (hostname) {
+      const [ipaddress, port] = hostname.split(':');
+      this.hostname = ipaddress;
+    }
     this.username = username;
     this.api = new hue.api(this.hostname, this.username, null, port);
   }

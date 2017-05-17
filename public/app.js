@@ -15,6 +15,7 @@ const params = new URLSearchParams(location.search);
 const KIOSK_MODE = params.has('kiosk');
 if (KIOSK_MODE) {
   document.documentElement.classList.add('kiosk');
+  input.placeholder = 'Enter a URL on the screen below';
 } else {
   input.focus();
 }
@@ -98,7 +99,13 @@ function resetUI() {
 /**
  * @param {string} url URL to test in Lighthouse.
  */
-function runLighthouse(url) {
+function runLighthouse(url = '') {
+  // If user inputs domain, make it a full URL.
+  if (!url.match(/^https?:\/\//)) {
+    url = `http://${url}`;
+    input.value = url;
+  }
+
   if (!url.length || !input.validity.valid) {
     alert('URL is not valid');
     return;
@@ -180,6 +187,7 @@ function attachEventListeners() {
 
   searchArrow.addEventListener('click', e => {
     runLighthouse(input.value);
+    channel.postMessage({cmd: 'seturl', url: input.value});
   });
 
   startOver.addEventListener('click', e => {

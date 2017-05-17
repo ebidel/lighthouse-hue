@@ -105,12 +105,15 @@ if (flags.reset) {
   return;
 }
 
+let hueLightsAvailable = true;
+
 createHueUserIfNeeded()
   .then(username => {
     console.log(`${Log.purple}Hue user:${Log.reset} ${username}`);
     lights.resetLights();
   })
   .catch(err => {
+    hueLightsAvailable = false;
     Log.log('Lighthouse runner:', 'Hue Lights unavailable.');
   })
   // .then(_ => {
@@ -119,7 +122,12 @@ createHueUserIfNeeded()
   //   // });
   // })
   .then(_ => runLighthouse())
-  .then(score => lights.setLightsBasedOnScore(score).then(_ => score))
+  .then(score => {
+    if (hueLightsAvailable) {
+      lights.setLightsBasedOnScore(score);
+    }
+    return score;
+  })
   .then(score => {
     if (flags.view) {
       opn(flags.outputPath, {wait: false});
