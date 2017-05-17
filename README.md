@@ -4,8 +4,11 @@ based on overall report score.
 
 ### Get started
 
-`yarn upgrade`
-`yarn install`
+    yarn install
+
+If you've already installed the app and just want to pull the latest deps:
+
+    yarn upgrade
 
 ### Run it
 
