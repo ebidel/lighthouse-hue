@@ -4,9 +4,18 @@ based on overall report score.
 
 ### Get started
 
+`yarn upgrade`
 `yarn install`
 
 ### Run it
+
+    yarn start
+
+This will start a webserver and open two browser windows to the app. One is a
+kiosk UI (http://localhost:8080?kiosk) that you should drag to a larger monitor
+and the other is where users input a URL to test Lighthouse (http://localhost:8080).
+
+### Setup it
 
 Create a `.hueusername` in the root folder and fill it with a username
 registered on your Hue Bridge. If you don't have a username:
@@ -20,8 +29,4 @@ node index.js --view <URL>
 node index.js --output=json --output-path=results.json <URL>
 ```
 
-You can also run the UI version which starts a web server on http://localhost:8080:
-
-    yarn start
-
-Both ways should should launch Chrome and run Lighthouse against the URL that you input.
+This should launch Chrome and run Lighthouse against the URL that you input.
