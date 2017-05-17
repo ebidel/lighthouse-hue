@@ -284,7 +284,7 @@ html.kiosk {
   pointer-events: none;
 }
 .kiosk #lighthouse-score {
-  top: 50px;
+  top: 100px;
   left: 0;
   right: 0;
   width: 100%;
@@ -308,6 +308,8 @@ html.kiosk {
   flex-direction: column;
   align-items: center;
   margin-top: -500px;
+  margin-bottom: -60px;
+  margin-left: -25px;
 }
 .kiosk .logo {
   height: 600px;
@@ -315,6 +317,19 @@ html.kiosk {
 }
 .kiosk .url-section {
   font-size: 35px;
+  background: radial-gradient(ellipse at 50% 50%, #fafafa 25%, transparent);
+}
+.kiosk .url-section::before {
+  content: 'Testing...';
+  color: var(--grey);
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 400ms ease-in-out;
+  font-size: 24px;
+}
+.kiosk .running .url-section::before {
+  opacity: 1;
 }
 .kiosk #url {
   background: none;

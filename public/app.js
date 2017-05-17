@@ -11,6 +11,7 @@ const searchArrow = document.querySelector('.search-arrow');
 const startOver = document.querySelector('#startover');
 
 const params = new URLSearchParams(location.search);
+let setTimeoutId_;
 
 const KIOSK_MODE = params.has('kiosk');
 if (KIOSK_MODE) {
@@ -46,6 +47,7 @@ function setScore(score) {
   scoreEl.textContent = score;
   scoreEl.classList.add(rating);
   document.body.classList.add(rating, 'done');
+  document.body.classList.remove('running');
 }
 
 /**
@@ -56,7 +58,7 @@ function setUrl(url) {
 }
 
 function startNewRun() {
-  resetUI();
+  resetUI(false);
   document.body.classList.add('running');
 }
 
@@ -87,7 +89,10 @@ function updateLog(data) {
   logger.scrollTop = logger.scrollHeight;
 }
 
-function resetUI() {
+function resetUI(clearInput=true) {
+  if (clearInput) {
+    input.value = null;
+  }
   logger.value = '';
   document.body.className = '';
   reportLink.tabIndex = -1;
@@ -148,11 +153,11 @@ channel.onmessage = function(e) {
     case 'start':
       startNewRun();
       break;
-    case 'finalize':
-      finalizeRun();
-      break;
     case 'score':
       setScore(e.data.score);
+      clearInterval(setTimeoutId_); // cancel previous run's timeout.
+      // Reset kiosk UI in 2min if a user hasn't by then.
+      setTimeoutId_ = setTimeout(resetUI, 60 * 1000 * 2);
       break;
     case 'log':
       updateLog(e.data.log)
@@ -180,7 +185,6 @@ function attachEventListeners() {
     if (document.body.classList.contains('done')) {
       fetch('/reset');
       resetUI();
-      input.value = null;
       document.querySelector('#useheadless').checked = false;
     }
   });
@@ -193,7 +197,6 @@ function attachEventListeners() {
   startOver.addEventListener('click', e => {
     e.preventDefault();
     resetUI();
-    input.value = null;
     document.querySelector('#useheadless').checked = false;
   });
 

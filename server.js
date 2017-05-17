@@ -28,7 +28,7 @@ app.use(express.static('public'));
 
 const SOUNDS = {
   good: {score: 90, file: './src/audio/harbor.mp3'},
-  bad: {score: 20, file: './src/audio/foghorn.mp3'}
+  bad: {score: 30, file: './src/audio/foghorn.mp3'}
 };
 
 /**
