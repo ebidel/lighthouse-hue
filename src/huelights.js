@@ -61,7 +61,7 @@ function promiseify(fn, ...args) {
 }
 
 class HueLights {
-  constructor(hostname = null, username = null) {
+  constructor(hostname=null, username=null) {
     const [ipaddress, port] = hostname.split(':');
     this.hostname = ipaddress;
     this.username = username;
@@ -101,7 +101,7 @@ class HueLights {
    * Turns off all lights on the bridge.
    * @param {number} transition Transition time. Defaults to 500.
    */
-  turnAllLightsOff(transition = 500) {
+  turnAllLightsOff(transition=500) {
     const state = hue.lightState.create().transition(transition).off();
 
     return this.lights().then(lights => {
@@ -117,6 +117,109 @@ class HueLights {
 
     return this.lights().then(lights => {
       lights.map(light => this.api.setLightState(light.id, state));
+    });
+  }
+
+  /**
+   * Pulses lights specified number of times.
+   * @param {number} times
+   * @param {number=} timeout Delay (ms) between pulses. Defaults to 2000.
+   * @param {number=} color
+   * @return {number} A setInterval id.
+   */
+  async pulseLights(times, timeout=2000, color=COLORS.white) {
+    let iteration = 0;
+
+    // await this.resetLights();
+    await this.turnAllLightsOff();
+
+    return new Promise(resolve => {
+
+      const doPulse = async () => {
+        const lights = await this.lights();
+        const sat = color === COLORS.white ? 0 : 255;
+        const state = hue.lightState.create().hue(color).bri(255).sat(sat);//.shortAlert();
+        lights.forEach(light => {
+          // let state = hue.lightState.create().turnOff();
+          // this.api.setLightState(light.id, state);
+
+          // state = hue.lightState.create().on().alertShort();
+          // this.api.setLightState(light.id, state);
+
+          // let state;
+          if (light.state.on) {
+            state.off();
+          } else {
+            state.on();
+          }
+
+          this.api.setLightState(light.id, state);
+        });
+
+        setTimeout(() => {
+          // One pulse is an on and off.
+          if (iteration < times) {
+            doPulse();
+          } else {
+            // await this.turnAllLightsOff();
+            resolve();
+          }
+          iteration++;
+        }, timeout);
+      };
+
+      doPulse();
+    });
+  }
+
+  /**
+   * Sequentially turns on/off each bulb on the bridge. If the lights are in a
+   * circular arrangement, this will create the effect of a rotating beacon.
+   * @param {number=} rotations
+   * @param {number=} timeout Delay between each light activating.
+   * @param {number=} color
+   */
+  async beaconLights(rotations = Infinity, timeout=1000, color=COLORS.white) {
+    let activeLightId;
+    let idx = 0;
+    let iteration = 0;
+
+    // await this.resetLights();
+    await this.turnAllLightsOff();
+
+    let lights = await this.lights();
+    lights = lights.filter(light => light.name !== 'lightstrip');
+
+    const incrementSpin = () => {
+      activeLightId = lights[idx].id;
+
+      lights.forEach(light => {
+        //const state = hue.lightState.create().hue(color).bri(255).sat(0);//.transition(1000);
+        const state = hue.lightState.create().hue(color).bri(255).sat(255);
+
+        if (light.id === activeLightId) {
+          state.on();
+        } else {
+          state.off();
+        }
+        this.api.setLightState(light.id, state);
+      });
+
+      idx = ++idx % lights.length;
+    }
+
+    return new Promise(resolve => {
+      const interval_ = setInterval(() => {
+        // A full rotation is when all lights have been activated once.
+        if (iteration < rotations * lights.length) {
+          incrementSpin();
+          iteration++;
+        } else {
+          incrementSpin(true);
+          clearInterval(interval_);
+          this.turnAllLightsOff().then(resolve);
+        }
+      }, timeout);
     });
   }
 
@@ -141,4 +244,7 @@ class HueLights {
   }
 }
 
-module.exports = HueLights;
+module.exports = {
+  HueLights,
+  COLORS
+};

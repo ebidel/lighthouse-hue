@@ -23,8 +23,7 @@ const ReportGenerator = require('lighthouse/lighthouse-core/report/report-genera
 const ReportGeneratorV2 = require('lighthouse/lighthouse-core/report/v2/report-generator');
 const Log = require('lighthouse/lighthouse-core/lib/log');
 const LighthouseRunner = require('./src/runner');
-const HueLights = require('./src/huelights');
-const player = require('play-sound')({});
+const {HueLights, COLORS} = require('./src/huelights');
 
 // const PERF_CONFIG = require('lighthouse/lighthouse-core/config/perf.json');
 // const DEFAULT_CONFIG = require('lighthouse/lighthouse-core/config/default.json');
@@ -32,11 +31,6 @@ const player = require('play-sound')({});
 const APP_DESCRIPTION = 'Lighthouse';
 const USERNAME = fs.readFileSync('.hueusername', 'utf8');
 const BRIDGE_IP = fs.readFileSync('.bridgeipaddress', 'utf8') || null;
-
-const SOUNDS = {
-  good: {score: 90, file: './src/audio/harbor.mp3'},
-  bad: {score: 20, file: './src/audio/foghorn.mp3'}
-};
 
 const flags = yargs
   .help('h')
@@ -103,29 +97,6 @@ function runLighthouse() {
   });
 }
 
-/**
- * Plays funny sound if score is low/high outlier.
- * @param {number} score
- */
-function playScoreSound(score) {
-  let file;
-
-  if (score >= SOUNDS.good.score) {
-    file = SOUNDS.good.file;
-  } else if (score <= SOUNDS.bad.score) {
-    file = SOUNDS.bad.file;
-  }
-
-  if (file) {
-    const audio = player.play(file, err => {
-      if (err && !err.killed) {
-        console.error(err);
-      }
-    });
-    // audio.kill();
-  }
-}
-
 if (flags.reset) {
   createHueUserIfNeeded().then(username => {
     console.log(`${Log.purple}Hue user:${Log.reset} ${username}`);
@@ -142,15 +113,17 @@ createHueUserIfNeeded()
   .catch(err => {
     Log.log('Lighthouse runner:', 'Hue Lights unavailable.');
   })
+  // .then(_ => {
+  //   // lights.pulseLights(10, 3000, COLORS.white).then(() => {
+  //   //   console.log('Done');
+  //   // });
+  // })
   .then(_ => runLighthouse())
   .then(score => lights.setLightsBasedOnScore(score).then(_ => score))
   .then(score => {
     if (flags.view) {
       opn(flags.outputPath, {wait: false});
     }
-
-    playScoreSound(score);
-
   }).catch(err => {
     lights.resetLights();
     console.error(Log.redify(err));

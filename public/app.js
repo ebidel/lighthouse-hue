@@ -92,6 +92,7 @@ function resetUI() {
   reportLink.tabIndex = -1;
   startOver.tabIndex = -1;
   scoreEl.textContent = '';
+  scoreEl.className = '';
 }
 
 /**
@@ -170,7 +171,7 @@ function attachEventListeners() {
 
   logo.addEventListener('click', e => {
     if (document.body.classList.contains('done')) {
-      fetch('reset');
+      fetch('/reset');
       resetUI();
       input.value = null;
       document.querySelector('#useheadless').checked = false;

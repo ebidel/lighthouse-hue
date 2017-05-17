@@ -20,10 +20,39 @@ const express = require('express');
 const exec = require('child_process').exec;
 const opn = require('opn');
 const spawn = require('child_process').spawn;
+const player = require('play-sound')({});
 
 const app = express();
 app.use(express.static('public'));
 // app.use(bodyParser.json());
+
+const SOUNDS = {
+  good: {score: 90, file: './src/audio/harbor.mp3'},
+  bad: {score: 20, file: './src/audio/foghorn.mp3'}
+};
+
+/**
+ * Plays funny sound if score is low/high outlier.
+ * @param {number} score
+ */
+function playScoreSound(score) {
+  let file;
+
+  if (score >= SOUNDS.good.score) {
+    file = SOUNDS.good.file;
+  } else if (score <= SOUNDS.bad.score) {
+    file = SOUNDS.bad.file;
+  }
+
+  if (file) {
+    const audio = player.play(file, err => {
+      if (err && !err.killed) {
+        console.error(err);
+      }
+    });
+    // audio.kill();
+  }
+}
 
 app.get('/run', (req, res) => {
   // exec(`node index.js --view ${req.query.url}`, (err, stdout, stderr) => {
@@ -49,15 +78,24 @@ app.get('/run', (req, res) => {
 
   const child = spawn('node', [...args, req.query.url]);
 
+  let log = '';
+
   child.stderr.on('data', data => {
     // res.write(`id: ${id}\n`);
     res.write(`data: ${data.toString()}\n\n`);
+    log += data.toString();
     // res.flush();
   });
 
   child.on('close', code => {
     res.write(`data: done\n\n`);
     res.status(410).end();
+
+    const match = log.match(/.*LIGHTHOUSE SCORE:\s+(.*)/);
+    if (match) {
+      playScoreSound(Number(match[1]));
+    }
+    log = '';
   });
 });
 
