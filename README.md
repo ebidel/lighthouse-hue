@@ -12,11 +12,21 @@ If you've already installed the app and just want to pull the latest deps:
 
 ### Run it
 
-    yarn start
+#### Kiosk mode
+
+To run "kiosk mode", use:
+
+    yarn kiosk
 
 This will start a webserver and open two browser windows to the app. One is a
 kiosk UI (http://localhost:8080?kiosk) that you should drag to a larger monitor
 and the other is where users input a URL to test Lighthouse (http://localhost:8080).
+
+#### Standalone mode
+
+To only start a webserver, use:
+
+    yarn start
 
 ### Setup it
 

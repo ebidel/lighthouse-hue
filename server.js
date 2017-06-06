@@ -26,6 +26,8 @@ const app = express();
 app.use(express.static('public'));
 // app.use(bodyParser.json());
 
+const KIOSK_MODE = process.env.KIOSK;
+
 const SOUNDS = {
   good: {score: 90, file: './src/audio/harbor.mp3'},
   bad: {score: 30, file: './src/audio/foghorn.mp3'}
@@ -109,6 +111,8 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
   console.log('Press Ctrl+C to quit.');
-  opn(`http://localhost:${PORT}`, {wait: false});
-  opn(`http://localhost:${PORT}?kiosk`, {wait: false});
+  if (KIOSK_MODE) {
+    opn(`http://localhost:${PORT}`, {wait: false});
+    opn(`http://localhost:${PORT}?kiosk`, {wait: false});
+  }
 });
