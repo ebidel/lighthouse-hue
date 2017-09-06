@@ -17,11 +17,8 @@
 'use strict';
 
 const lighthouse = require('lighthouse');
-const ChromeLauncher = require('lighthouse/chrome-launcher/chrome-launcher.js');
-const Log = require('lighthouse/lighthouse-core/lib/log');
-
-const _SIGINT = 'SIGINT';
-const _SIGINT_EXIT_CODE = 130;
+const chromeLauncher = require('lighthouse/chrome-launcher');
+const Log = require('lighthouse-logger');
 
 class LighthouseRunner {
   constructor(url, flags, config) {
@@ -37,15 +34,12 @@ class LighthouseRunner {
   launchChrome(headless = this.flags.headless) {
     Log.log('Lighthouse runner:', 'Launching Chrome');
 
-    return ChromeLauncher.launch({
+    return chromeLauncher.launch({
       chromeFlags: [
         '--window-position=40,100',
         '--window-size=412,732', // Nexus 5x
         headless ? '--headless' : ''
       ]
-    }).then(chrome => {
-      this.flags.port = chrome.port;
-      return chrome;
     });
   }
 
@@ -55,21 +49,19 @@ class LighthouseRunner {
     return this.launchChrome()
       .then(chrome => {
         launchedChrome = chrome;
+        this.flags.port = chrome.port;
+
         Log.log('Lighthouse runner:', 'running...');
         return lighthouse(this.url, this.flags, this.config);
       })
       .then(results => {
         // Workaround for headless Chrome. Introduce slight delay before killing Chrome.
         // See https://github.com/GoogleChrome/lighthouse/issues/1931
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(results);
-          }, 10);
-        });
+        return new Promise(resolve => setTimeout(_ => resolve(results), 10));
       })
       .then(results => launchedChrome.kill().then(_ => results))
       .catch(err => {
-        return launchedChrome.kill().then(() => {
+        return launchedChrome.kill().then(_ => {
           throw err;
         }, this._handleError);
       });

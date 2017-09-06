@@ -1,6 +1,6 @@
 {
   "name": "LigthhouseHue",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Lighthouse score on Philips Hue light bulbs",
   "main": "index.js",
   "scripts": {
@@ -12,10 +12,10 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
-    "lighthouse": "^2.0.0",
+    "lighthouse": "^2.4.0",
     "node-hue-api": "^2.4.2",
     "open": "^0.0.5",
     "play-sound": "^1.1.1",
-    "yargs": "^7.0.2"
+    "yargs": "^8.0.2"
   }
 }

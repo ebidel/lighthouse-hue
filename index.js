@@ -19,9 +19,8 @@
 const fs = require('fs');
 const opn = require('opn');
 const yargs = require('yargs');
-const ReportGenerator = require('lighthouse/lighthouse-core/report/report-generator');
 const ReportGeneratorV2 = require('lighthouse/lighthouse-core/report/v2/report-generator');
-const Log = require('lighthouse/lighthouse-core/lib/log');
+const Log = require('lighthouse-logger');
 const LighthouseRunner = require('./src/runner');
 const {HueLights, COLORS} = require('./src/huelights');
 
@@ -40,7 +39,7 @@ const flags = yargs
   .alias('v', 'version')
   .showHelpOnFail(false, 'Specify --help for available options')
   .boolean(['reset', 'view', 'headless'])
-  .default('output', 'domhtml')
+  .default('output', 'html')
   .default('output-path', './public/results.html')
   .default('log-level', 'info')
   .argv;
@@ -82,10 +81,8 @@ function runLighthouse() {
     results.artifacts = undefined; // prevent circular references in the JSON.
 
     let html;
-    if (flags.output === 'domhtml') {
+    if (flags.output === 'html') {
       html = new ReportGeneratorV2().generateReportHtml(results);
-    } else {
-      html = new ReportGenerator().generateHTML(results, 'cli');
     }
 
     fs.writeFileSync(flags.outputPath, html);
