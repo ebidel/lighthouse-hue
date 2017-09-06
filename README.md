@@ -28,6 +28,15 @@ To only start a webserver, use:
 
     yarn start
 
+#### Running stable Chrome
+
+To run a different version of Chrome (e.g. Stable), specify the `CHROME_PATH` env variable:
+
+```
+CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" yarn start
+CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" yarn kiosk
+```
+
 ### Setup it
 
 Create a `.hueusername` in the root folder and fill it with a username

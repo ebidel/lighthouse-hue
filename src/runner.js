@@ -34,13 +34,18 @@ class LighthouseRunner {
   launchChrome(headless = this.flags.headless) {
     Log.log('Lighthouse runner:', 'Launching Chrome');
 
-    return chromeLauncher.launch({
+    const opts = {
       chromeFlags: [
         '--window-position=40,100',
         '--window-size=412,732', // Nexus 5x
         headless ? '--headless' : ''
       ]
-    });
+    };
+    if (this.flags.chromePath) {
+      opts.chromePath = this.flags.chromePath;
+    }
+
+    return chromeLauncher.launch(opts);
   }
 
   run() {

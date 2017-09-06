@@ -43,6 +43,7 @@ const flags = yargs
   .default('output-path', './public/results.html')
   .default('log-level', 'info')
   .argv;
+flags.chromePath = process.env.CHROME_PATH || null;
 
 const url = yargs.argv._[0];
 
