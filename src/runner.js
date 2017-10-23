@@ -73,14 +73,9 @@ class LighthouseRunner {
   }
 
   getOverallScore(lighthouseResults) {
-    if (lighthouseResults) {
-      return lighthouseResults.score; // v2
-    }
-    const scoredAggregations = lighthouseResults.aggregations.filter(a => a.scored);
-    const total = scoredAggregations.reduce((sum, aggregation) => {
-      return sum + aggregation.total;
-    }, 0);
-    return (total / scoredAggregations.length) * 100;
+    // average the 4 category scores. even weighting.
+    const totalScoreSum = lighthouseResults.reportCategories.reduce((tot, cat) => tot += cat.score, 0);
+    return totalScoreSum / lighthouseResults.reportCategories.length;
   }
 
   print(score) {
