@@ -40,7 +40,8 @@ CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" yarn 
 ### Setup it
 
 Create a `.hueusername` in the root folder and fill it with a username
-registered on your Hue Bridge. If you don't have a username:
+registered on your Hue Bridge. Make sure there's no trailing new line in the file.
+If you don't have a username:
 
 1. press the Link Button on the Hue Bridge
 2. run the app (below). Doing so will create a "Lighthouse" user on the bridge.
@@ -52,3 +53,7 @@ node index.js --output=json --output-path=results.json <URL>
 ```
 
 This should launch Chrome and run Lighthouse against the URL that you input.
+
+Alternatively, have the bridge generate a random username for you by following the instructions in the Hue API doc (https://developers.meethue.com/documentation/getting-started), and enter it into `.hueusername`.
+
+Also, create a `.bridgeipaddress` in the root folder and fill it with the IP address of the Hue Bridge.
